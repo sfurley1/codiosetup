@@ -1,0 +1,23 @@
+#! /bin/bash
+
+echo "Installing stuff"
+parts install php5 php5-apache2 php5-pdo-mysql php5-gd mysql composer
+
+echo "installing drush"
+composer global require drush/drush:6.*
+echo "re open terminal after the script is complete to use drush"
+
+echo "starting things"
+echo "parts stop apache2 mysql ; parts start apache2 mysql" > ~/startup.sh
+chmod +x ~/startup.sh
+~/startup.sh
+
+pass=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)
+mysql -u root -e"create database codio; create user codio@localhost identified by '$pass'; grant usage on *.* to codio@localhost; grant all privileges on codio.* to codio@localhost"
+
+echo "=============================="
+echo "db credentials are as follows:"
+echo ""
+echo "user: codio"
+echo "pass: $pass"
+echo "db: codio"
